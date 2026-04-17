@@ -3,161 +3,101 @@ import anthropic
 import json
 import os
 from dotenv import load_dotenv
-
+ 
 load_dotenv()
-
+ 
 app = Flask(__name__)
-
+ 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-MODEL = "claude-sonnet-4-20250514"
-
-
-def build_prompt(text, mode):
-    """Build different prompts based on the requested mode."""
-
-    if mode == "summary":
-        return f"""You are a study assistant. Read the following study material and produce a concise, 
-well-structured summary. Use clear headings and bullet points where helpful. 
-Keep it to 150-250 words.
-
-Study material:
-{text}
-
-Respond ONLY with a JSON object in this exact format (no markdown, no extra text):
-{{
-  "summary": "Your summary here with \\n for line breaks"
-}}"""
-
-    elif mode == "concepts":
-        return f"""You are a study assistant. Extract the key concepts, terms, and definitions from the 
-following study material. List 5-8 of the most important ones.
-
-Study material:
-{text}
-
-Respond ONLY with a JSON object in this exact format (no markdown, no extra text):
-{{
-  "concepts": [
-    {{"term": "Term 1", "definition": "Definition of term 1"}},
-    {{"term": "Term 2", "definition": "Definition of term 2"}}
-  ]
-}}"""
-
-    elif mode == "quiz":
-        return f"""You are a study assistant. Generate 5 multiple choice questions based on the following 
-study material. Each question should have 4 options (A, B, C, D) with one correct answer.
-
-Study material:
-{text}
-
-Respond ONLY with a JSON object in this exact format (no markdown, no extra text):
-{{
-  "questions": [
-    {{
-      "question": "Question text here?",
-      "options": {{
-        "A": "Option A",
-        "B": "Option B",
-        "C": "Option C",
-        "D": "Option D"
-      }},
-      "answer": "A",
-      "explanation": "Brief explanation of why A is correct"
-    }}
-  ]
-}}"""
-
-    elif mode == "all":
-        return f"""You are a study assistant. Analyze the following study material and produce:
-1. A concise summary (150-200 words)
-2. 5-7 key concepts with definitions
-3. 5 multiple choice questions
-
-Study material:
-{text}
-
-Respond ONLY with a JSON object in this exact format (no markdown, no extra text):
-{{
-  "summary": "Your summary here",
-  "concepts": [
-    {{"term": "Term", "definition": "Definition"}}
-  ],
-  "questions": [
-    {{
-      "question": "Question?",
-      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
-      "answer": "A",
-      "explanation": "Why A is correct"
-    }}
-  ]
-}}"""
-
-    return None
-
-
+ 
+ 
 @app.route("/")
 def index():
     return render_template("index.html")
-
-
+ 
+ 
 @app.route("/api/process", methods=["POST"])
 def process_text():
     data = request.get_json()
-
-    text = data.get("text", "").strip()
-    mode = data.get("mode", "all") 
-
+    text = data.get("text", "")
+    mode = data.get("mode", "all")
+ 
     if not text:
         return jsonify({"error": "No text provided"}), 400
-
+ 
     if len(text) < 50:
-        return jsonify({"error": "Text is too short. Please provide more content."}), 400
+        return jsonify({"error": "Please provide more text"}), 400
 
-    if len(text) > 10000:
-        return jsonify({"error": "Text is too long. Please keep it under 10,000 characters."}), 400
-
-    prompt = build_prompt(text, mode)
-    if not prompt:
-        return jsonify({"error": "Invalid mode selected"}), 400
-
+    if mode == "summary":
+        prompt = f"""Summarize the following study material in 150-200 words. Use bullet points where useful.
+ 
+Text:
+{text}
+ 
+Reply ONLY with a JSON object like this (no extra text):
+{{"summary": "your summary here"}}"""
+ 
+    elif mode == "concepts":
+        prompt = f"""Extract 5-7 key terms and definitions from the following text.
+ 
+Text:
+{text}
+ 
+Reply ONLY with a JSON object like this (no extra text):
+{{"concepts": [{{"term": "term here", "definition": "definition here"}}]}}"""
+ 
+    elif mode == "quiz":
+        prompt = f"""Create 5 multiple choice questions from the following study material.
+Each question should have 4 options (A B C D) and one correct answer.
+ 
+Text:
+{text}
+ 
+Reply ONLY with a JSON object like this (no extra text):
+{{"questions": [{{"question": "question here", "options": {{"A": "option", "B": "option", "C": "option", "D": "option"}}, "answer": "A", "explanation": "why A is correct"}}]}}"""
+ 
+    else:
+        prompt = f"""Analyze the following study material and give me:
+1. A summary (150-200 words)
+2. 5-7 key concepts with definitions
+3. 5 multiple choice questions with answers
+ 
+Text:
+{text}
+ 
+Reply ONLY with a JSON object (no extra text, no markdown):
+{{
+  "summary": "summary here",
+  "concepts": [{{"term": "term", "definition": "definition"}}],
+  "questions": [{{"question": "q", "options": {{"A": "a", "B": "b", "C": "c", "D": "d"}}, "answer": "A", "explanation": "explanation"}}]
+}}"""
+ 
     try:
-        message = client.messages.create(
-            model=MODEL,
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
             max_tokens=2000,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
         )
-
-        response_text = message.content[0].text.strip()
-
-        if response_text.startswith("```"):
+ 
+        response_text = response.content[0].text
+        
+        if "```" in response_text:
             response_text = response_text.split("```")[1]
             if response_text.startswith("json"):
                 response_text = response_text[4:]
-            response_text = response_text.strip()
+ 
+        result = json.loads(response_text.strip())
+        return jsonify({"success": True, "data": result})
+ 
+    except json.JSONDecodeError:
 
-        result = json.loads(response_text)
-        return jsonify({"success": True, "data": result, "mode": mode})
-
-    except json.JSONDecodeError as e:
-        print(f"JSON parse error: {e}")
-        print(f"Raw response: {response_text}")
-        return jsonify({"error": "Failed to parse AI response. Try again."}), 500
-
-    except anthropic.APIError as e:
-        print(f"Anthropic API error: {e}")
-        return jsonify({"error": "AI service error. Check your API key."}), 503
-
+        return jsonify({"error": "Failed to parse response, try again"}), 500
     except Exception as e:
-        print(f"Unexpected error: {e}")
-        return jsonify({"error": "Something went wrong. Please try again."}), 500
-
-
-@app.route("/api/health", methods=["GET"])
-def health():
-    """Simple health check endpoint."""
-    return jsonify({"status": "ok", "model": MODEL})
-
-
+        print("Error:", e)
+        return jsonify({"error": "Something went wrong"}), 500
+ 
+ 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
