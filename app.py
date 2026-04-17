@@ -8,8 +8,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Initialize Anthropic client
-# Make sure ANTHROPIC_API_KEY is set in your .env file
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 MODEL = "claude-sonnet-4-20250514"
@@ -108,7 +106,7 @@ def process_text():
     data = request.get_json()
 
     text = data.get("text", "").strip()
-    mode = data.get("mode", "all")  # summary | concepts | quiz | all
+    mode = data.get("mode", "all") 
 
     if not text:
         return jsonify({"error": "No text provided"}), 400
@@ -132,7 +130,6 @@ def process_text():
 
         response_text = message.content[0].text.strip()
 
-        # Strip markdown code fences if present (Claude sometimes adds them)
         if response_text.startswith("```"):
             response_text = response_text.split("```")[1]
             if response_text.startswith("json"):
@@ -143,7 +140,6 @@ def process_text():
         return jsonify({"success": True, "data": result, "mode": mode})
 
     except json.JSONDecodeError as e:
-        # TODO: add retry logic here — Claude occasionally returns malformed JSON
         print(f"JSON parse error: {e}")
         print(f"Raw response: {response_text}")
         return jsonify({"error": "Failed to parse AI response. Try again."}), 500
@@ -164,5 +160,4 @@ def health():
 
 
 if __name__ == "__main__":
-    # Debug mode ON for development — turn off before any real deployment
     app.run(debug=True, port=5000)
