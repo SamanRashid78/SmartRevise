@@ -17,10 +17,7 @@
     </div>
     <p class="tagline">Paste your notes. Get summaries, concepts & quizzes — instantly.</p>
   </header>
-
-  <main class="container">
-
-    <!-- INPUT PANEL -->
+ 
     <section class="input-panel">
       <div class="panel-label">Your Study Material</div>
       <textarea
@@ -48,10 +45,8 @@
       </button>
     </section>
 
-    <!-- ERROR -->
     <div id="errorBox" class="error-box hidden"></div>
 
-    <!-- OUTPUT AREA -->
     <section id="outputArea" class="output-area hidden">
 
       <div class="output-header">
@@ -59,7 +54,6 @@
         <button class="export-btn" onclick="exportContent()">⬇ Export</button>
       </div>
 
-      <!-- SUMMARY -->
       <div id="summarySection" class="output-card hidden">
         <div class="card-header">
           <span class="card-icon">📝</span>
@@ -68,7 +62,6 @@
         <div id="summaryContent" class="card-body"></div>
       </div>
 
-      <!-- KEY CONCEPTS -->
       <div id="conceptsSection" class="output-card hidden">
         <div class="card-header">
           <span class="card-icon">🔑</span>
@@ -77,7 +70,6 @@
         <div id="conceptsContent" class="card-body concepts-grid"></div>
       </div>
 
-      <!-- QUIZ -->
       <div id="quizSection" class="output-card hidden">
         <div class="card-header">
           <span class="card-icon">❓</span>
@@ -98,7 +90,6 @@
     <p>Smart Study Assistant — CS Project · Powered by Claude AI</p>
   </footer>
 
-  <!-- Loading Overlay -->
   <div id="loadingOverlay" class="loading-overlay hidden">
     <div class="loader-box">
       <div class="spinner"></div>
