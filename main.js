@@ -1,9 +1,8 @@
-// main.js — Smart Study Assistant frontend logic
+// main.js —frontend logic
 
 let selectedMode = "all";
-let currentData = null;  // store last API response for export
+let currentData = null;  
 
-// ── MODE BUTTON SELECTION ──
 document.querySelectorAll(".mode-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
@@ -12,7 +11,6 @@ document.querySelectorAll(".mode-btn").forEach(btn => {
   });
 });
 
-// ── CHARACTER COUNTER ──
 const textArea = document.getElementById("studyText");
 const charCount = document.getElementById("charCount");
 
@@ -22,7 +20,6 @@ textArea.addEventListener("input", () => {
   charCount.style.color = len > 9000 ? "#e05c5c" : "";
 });
 
-// ── LOADING MESSAGES ──
 const loadingMessages = [
   "Analyzing your notes...",
   "Extracting key ideas...",
@@ -50,12 +47,11 @@ function hideLoading() {
   document.getElementById("loadingOverlay").classList.add("hidden");
 }
 
-// ── MAIN PROCESS FUNCTION ──
 async function processText() {
   const text = textArea.value.trim();
   const errorBox = document.getElementById("errorBox");
 
-  // Hide previous output
+  
   errorBox.classList.add("hidden");
   document.getElementById("outputArea").classList.add("hidden");
 
@@ -94,12 +90,10 @@ async function processText() {
   }
 }
 
-// ── RENDER OUTPUT ──
 function renderOutput(data, mode) {
   const outputArea = document.getElementById("outputArea");
   outputArea.classList.remove("hidden");
 
-  // Hide all sections first
   hide("summarySection");
   hide("conceptsSection");
   hide("quizSection");
@@ -168,7 +162,6 @@ function renderQuiz(questions) {
   show("quizSection");
 }
 
-// ── CHECK ANSWERS ──
 function checkAnswers() {
   const questions = document.querySelectorAll(".quiz-question");
   let correct = 0;
@@ -193,10 +186,8 @@ function checkAnswers() {
 
     if (selectedKey === correctAnswer) correct++;
 
-    // Show explanation
     explanation.classList.add("show");
 
-    // Disable radio buttons after checking
     qDiv.querySelectorAll("input[type='radio']").forEach(r => r.disabled = true);
   });
 
@@ -210,7 +201,6 @@ function checkAnswers() {
   scoreEl.classList.remove("hidden");
 }
 
-// ── EXPORT ──
 function exportContent() {
   if (!currentData) return;
 
@@ -218,12 +208,12 @@ function exportContent() {
   output += "=".repeat(40) + "\n\n";
 
   if (currentData.summary) {
-    output += "📝 SUMMARY\n" + "-".repeat(30) + "\n";
+    output += "SUMMARY\n" + "-".repeat(30) + "\n";
     output += currentData.summary + "\n\n";
   }
 
   if (currentData.concepts) {
-    output += "🔑 KEY CONCEPTS\n" + "-".repeat(30) + "\n";
+    output += " KEY CONCEPTS\n" + "-".repeat(30) + "\n";
     currentData.concepts.forEach(c => {
       output += `• ${c.term}: ${c.definition}\n`;
     });
@@ -231,7 +221,7 @@ function exportContent() {
   }
 
   if (currentData.questions) {
-    output += "❓ QUIZ QUESTIONS\n" + "-".repeat(30) + "\n";
+    output += " QUIZ QUESTIONS\n" + "-".repeat(30) + "\n";
     currentData.questions.forEach((q, i) => {
       output += `\nQ${i + 1}. ${q.question}\n`;
       Object.entries(q.options).forEach(([k, v]) => {
@@ -251,7 +241,6 @@ function exportContent() {
   URL.revokeObjectURL(url);
 }
 
-// ── HELPERS ──
 function showError(msg) {
   const box = document.getElementById("errorBox");
   box.textContent = msg;
