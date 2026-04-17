@@ -30,8 +30,8 @@ smart-study-assistant/
 # Setup & Installation
 1. Clone the repo
 ```bash
-git clone https://github.com/yourusername/smart-study-assistant.git
-cd smart-study-assistant
+git clone https://github.com/yourusername/smartrevise.git
+cd smartrevise
 ```
 2. Create a virtual environment
 ```bash
@@ -42,19 +42,15 @@ source venv/bin/activate        # On Windows: venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
-4. Set up your API key
-```bash
-cp .env.example .env
-# Edit .env and add your Anthropic API key
-```
-5. Run the app
+4. Run the app
 ```bash
 python app.py
-```
+
 
 # Future Improvements
 Add PDF/DOCX file upload support
 User accounts + saved study sessions
 Flashcard mode
 Spaced repetition scheduling
+
 ---
