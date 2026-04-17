@@ -45,7 +45,7 @@ pip install -r requirements.txt
 4. Run the app
 ```bash
 python app.py
-
+```
 
 # Future Improvements
 Add PDF/DOCX file upload support
