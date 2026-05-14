@@ -22,16 +22,16 @@ Go to http://localhost:5000 in your browser
 Python / Flask (backend)
 HTML, CSS, JavaScript (frontend)
 Anthropic Claude API (for AI processing)
-# Project structure
-smart-revise/
-├── app.py
-├── requirements.txt
-├── .env.example
-├── templates/
-│   └── index.html
-└── static/
-    ├── css/style.css
-    └── js/main.js
+# Files
+```
+app.py               ← backend, runs the server
+requirements.txt     ← lists the packages to install
+templates/
+└── index.html       ← the webpage
+static/
+├── css/style.css    ← styling
+└── js/main.js       ← frontend logic
+```
 # Notes
 This project is still in progress
 PDF upload not implemented yet
