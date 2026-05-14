@@ -1,4 +1,4 @@
-/*stylesheet */
+/* style.css — SmartRevise stylesheet */
 
 * {
   box-sizing: border-box;
@@ -12,6 +12,7 @@ body {
   color: #333;
 }
 
+/* header */
 .header {
   background-color: #2c3e50;
   color: white;
@@ -28,12 +29,14 @@ body {
   color: #ccc;
 }
 
+/* main container */
 .container {
   max-width: 800px;
   margin: 30px auto;
   padding: 0 20px;
 }
 
+/* input area */
 .input-section {
   background: white;
   padding: 20px;
@@ -64,6 +67,7 @@ small {
   font-size: 0.78rem;
 }
 
+/* mode buttons */
 .mode-select {
   display: flex;
   flex-direction: column;
@@ -95,6 +99,7 @@ small {
   border-color: #2c3e50;
 }
 
+/* generate button */
 #generateBtn {
   padding: 10px 24px;
   background: #27ae60;
@@ -115,6 +120,7 @@ small {
   cursor: not-allowed;
 }
 
+/* error box */
 .error {
   background: #fdecea;
   border: 1px solid #e74c3c;
@@ -125,6 +131,7 @@ small {
   font-size: 0.9rem;
 }
 
+/* results */
 #results {
   margin-top: 24px;
   display: flex;
@@ -147,14 +154,14 @@ small {
   padding-bottom: 8px;
 }
 
-/* summary */
+/* summary text */
 #summaryText {
   font-size: 0.93rem;
   line-height: 1.7;
   white-space: pre-wrap;
 }
 
-/* concepts */
+/* concept cards */
 .concept-item {
   margin-bottom: 12px;
   padding: 10px;
@@ -201,9 +208,16 @@ small {
   cursor: pointer;
 }
 
-.option.correct { color: green; font-weight: bold; }
-.option.wrong { color: red; }
+.option.correct {
+  color: green;
+  font-weight: bold;
+}
 
+.option.wrong {
+  color: red;
+}
+
+/* explanation shown after checking */
 .explanation-text {
   display: none;
   margin-top: 10px;
@@ -239,6 +253,7 @@ small {
   color: #2c3e50;
 }
 
+/* export button */
 .export-btn {
   padding: 9px 20px;
   background: #7f8c8d;
@@ -254,6 +269,7 @@ small {
   background: #6c7a7b;
 }
 
+/* loading overlay */
 .loading {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

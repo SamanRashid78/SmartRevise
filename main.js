@@ -1,7 +1,9 @@
-// main.js —frontend logic
-var selectedMode = "all";
-var lastResult = null;
+// main.js — frontend logic for SmartRevise
 
+var selectedMode = "all";
+var lastResult = null;  // store last result for export
+
+// mode button switching
 document.querySelectorAll(".mode-btn").forEach(function(btn) {
   btn.addEventListener("click", function() {
     document.querySelectorAll(".mode-btn").forEach(function(b) {
@@ -12,23 +14,26 @@ document.querySelectorAll(".mode-btn").forEach(function(btn) {
   });
 });
 
+// character counter
 document.getElementById("studyText").addEventListener("input", function() {
   var len = this.value.length;
   document.getElementById("charCount").textContent = len + " characters";
 });
 
+
 async function processText() {
   var text = document.getElementById("studyText").value.trim();
 
+  // reset previous state
   document.getElementById("errorMsg").classList.add("hidden");
   document.getElementById("results").classList.add("hidden");
 
   if (text === "") {
-    document.getElementById("errorMsg").textContent = "Please enter some text first.";
-    document.getElementById("errorMsg").classList.remove("hidden");
+    showError("Please paste some text first.");
     return;
   }
 
+  // disable button and show loading
   document.getElementById("generateBtn").disabled = true;
   document.getElementById("loading").classList.remove("hidden");
 
@@ -42,33 +47,43 @@ async function processText() {
     var json = await response.json();
 
     if (!json.success) {
-      throw new Error(json.error);
+      throw new Error(json.error || "Unknown error");
     }
 
     lastResult = json.data;
     showResults(json.data);
 
   } catch (err) {
-    document.getElementById("errorMsg").textContent = err.message || "Something went wrong.";
-    document.getElementById("errorMsg").classList.remove("hidden");
+    showError(err.message || "Something went wrong, please try again.");
   }
 
+  // re-enable button and hide loading
   document.getElementById("generateBtn").disabled = false;
   document.getElementById("loading").classList.add("hidden");
 }
 
+
+function showError(msg) {
+  var el = document.getElementById("errorMsg");
+  el.textContent = msg;
+  el.classList.remove("hidden");
+}
+
+
 function showResults(data) {
-  
+  // hide all boxes first
   document.getElementById("summaryBox").classList.add("hidden");
   document.getElementById("conceptsBox").classList.add("hidden");
   document.getElementById("quizBox").classList.add("hidden");
 
+  // summary
   if (data.summary) {
     document.getElementById("summaryText").textContent = data.summary;
     document.getElementById("summaryBox").classList.remove("hidden");
   }
 
-  if (data.concepts) {
+  // key concepts
+  if (data.concepts && data.concepts.length > 0) {
     var html = "";
     for (var i = 0; i < data.concepts.length; i++) {
       var c = data.concepts[i];
@@ -81,11 +96,14 @@ function showResults(data) {
     document.getElementById("conceptsBox").classList.remove("hidden");
   }
 
-  if (data.questions) {
+  // quiz questions
+  if (data.questions && data.questions.length > 0) {
     document.getElementById("score").classList.add("hidden");
+
     var quizHtml = "";
     for (var i = 0; i < data.questions.length; i++) {
       var q = data.questions[i];
+
       quizHtml += '<div class="question-block" data-answer="' + q.answer + '" data-qid="' + i + '">';
       quizHtml += '<p>Q' + (i + 1) + '. ' + q.question + '</p>';
 
@@ -94,13 +112,14 @@ function showResults(data) {
         var key = opts[j];
         quizHtml += '<label class="option" data-key="' + key + '">';
         quizHtml += '<input type="radio" name="q' + i + '" value="' + key + '" />';
-        quizHtml += key + '. ' + q.options[key];
+        quizHtml += ' ' + key + '. ' + q.options[key];
         quizHtml += '</label>';
       }
 
       quizHtml += '<div class="explanation-text">' + (q.explanation || "") + '</div>';
       quizHtml += '</div>';
     }
+
     document.getElementById("quizList").innerHTML = quizHtml;
     document.getElementById("quizBox").classList.remove("hidden");
   }
@@ -109,52 +128,55 @@ function showResults(data) {
   document.getElementById("results").scrollIntoView({ behavior: "smooth" });
 }
 
+
 function checkAnswers() {
   var questions = document.querySelectorAll(".question-block");
   var correct = 0;
-  var total = 0;
+  var answered = 0;
 
   questions.forEach(function(qDiv) {
     var correctAnswer = qDiv.dataset.answer;
     var selected = qDiv.querySelector("input:checked");
 
     if (!selected) return;
-    total++;
+    answered++;
 
     var selectedVal = selected.value;
-    var options = qDiv.querySelectorAll(".option");
 
-    options.forEach(function(opt) {
+    // highlight correct and wrong options
+    qDiv.querySelectorAll(".option").forEach(function(opt) {
       if (opt.dataset.key === correctAnswer) {
         opt.classList.add("correct");
       } else if (opt.dataset.key === selectedVal) {
         opt.classList.add("wrong");
       }
-      // disable inputs after checking
+      // disable after checking
       var inp = opt.querySelector("input");
       if (inp) inp.disabled = true;
     });
 
     if (selectedVal === correctAnswer) correct++;
 
+    // show explanation
     qDiv.querySelector(".explanation-text").classList.add("show");
   });
 
-  if (total === 0) {
+  if (answered === 0) {
     alert("Answer at least one question first!");
     return;
   }
 
   var scoreEl = document.getElementById("score");
-  scoreEl.textContent = "You got " + correct + " out of " + total + " correct.";
+  scoreEl.textContent = "Score: " + correct + " / " + answered;
   scoreEl.classList.remove("hidden");
 }
+
 
 function exportText() {
   if (!lastResult) return;
 
-  var output = "SMART STUDY ASSISTANT - STUDY SET\n";
-  output += "==================================\n\n";
+  var output = "SMARTREVISE — STUDY SET\n";
+  output += "========================\n\n";
 
   if (lastResult.summary) {
     output += "SUMMARY\n-------\n";
@@ -170,7 +192,7 @@ function exportText() {
   }
 
   if (lastResult.questions) {
-    output += "QUIZ QUESTIONS\n--------------\n";
+    output += "QUIZ\n----\n";
     lastResult.questions.forEach(function(q, i) {
       output += "\nQ" + (i + 1) + ". " + q.question + "\n";
       output += "A. " + q.options.A + "\n";
@@ -182,8 +204,8 @@ function exportText() {
   }
 
   var blob = new Blob([output], { type: "text/plain" });
-  var link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "study-set.txt";
-  link.click();
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "study-set.txt";
+  a.click();
 }
