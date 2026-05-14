@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart Study Assistant</title>
+  <title>SmartRevise</title>
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body>
 
   <div class="header">
-    <h1>Smart Study Assistant</h1>
-    <p>Paste your notes to get a summary, key concepts, and quiz questions</p>
+    <h1>SmartRevise</h1>
+    <p>Paste your notes and get a summary, key concepts, and quiz questions</p>
   </div>
 
   <div class="container">
@@ -20,21 +20,24 @@
       <textarea id="studyText" rows="10" placeholder="Paste your notes or textbook content here..."></textarea>
       <small id="charCount">0 characters</small>
 
+      <!-- mode selection -->
       <div class="mode-select">
-        <label><strong>What do you want to generate?</strong></label>
+        <label><strong>What do you want?</strong></label>
         <div class="modes">
           <button class="mode-btn active" data-mode="all">Everything</button>
-          <button class="mode-btn" data-mode="summary">Summary</button>
+          <button class="mode-btn" data-mode="summary">Summary only</button>
           <button class="mode-btn" data-mode="concepts">Key Concepts</button>
-          <button class="mode-btn" data-mode="quiz">Quiz</button>
+          <button class="mode-btn" data-mode="quiz">Quiz only</button>
         </div>
       </div>
 
       <button id="generateBtn" onclick="processText()">Generate</button>
     </div>
 
+    <!-- error message -->
     <div id="errorMsg" class="error hidden"></div>
 
+    <!-- results section (hidden until we get a response) -->
     <div id="results" class="hidden">
 
       <div id="summaryBox" class="result-card hidden">
@@ -59,8 +62,9 @@
 
   </div>
 
+  <!-- loading overlay -->
   <div id="loading" class="loading hidden">
-    <p>Loading, please wait...</p>
+    <p>Generating, please wait...</p>
   </div>
 
   <script src="/static/js/main.js"></script>
