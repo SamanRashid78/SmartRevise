@@ -24,13 +24,18 @@ HTML, CSS, JavaScript (frontend)
 Anthropic Claude API (for AI processing)
 # Files
 ```
-app.py               ← backend, runs the server
-requirements.txt     ← lists the packages to install
-templates/
-└── index.html       ← the webpage
-static/
-├── css/style.css    ← styling
-└── js/main.js       ← frontend logic
+smartrevise/
+├── app.py
+├── requirements.txt
+├── .gitignore
+├── README.md
+└── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── main.js
+└── templates/
+    └── index.html
 ```
 # Notes
 This project is still in progress
