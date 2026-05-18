@@ -1,7 +1,7 @@
-// main.js — frontend logic for SmartRevise
+// main.js — SmartRevise frontend logic
 
 var selectedMode = "all";
-var lastResult = null;  // store last result for export
+var lastResult = null;
 
 // mode button switching
 document.querySelectorAll(".mode-btn").forEach(function(btn) {
@@ -24,7 +24,6 @@ document.getElementById("studyText").addEventListener("input", function() {
 async function processText() {
   var text = document.getElementById("studyText").value.trim();
 
-  // reset previous state
   document.getElementById("errorMsg").classList.add("hidden");
   document.getElementById("results").classList.add("hidden");
 
@@ -33,7 +32,6 @@ async function processText() {
     return;
   }
 
-  // disable button and show loading
   document.getElementById("generateBtn").disabled = true;
   document.getElementById("loading").classList.remove("hidden");
 
@@ -57,7 +55,6 @@ async function processText() {
     showError(err.message || "Something went wrong, please try again.");
   }
 
-  // re-enable button and hide loading
   document.getElementById("generateBtn").disabled = false;
   document.getElementById("loading").classList.add("hidden");
 }
@@ -71,7 +68,6 @@ function showError(msg) {
 
 
 function showResults(data) {
-  // hide all boxes first
   document.getElementById("summaryBox").classList.add("hidden");
   document.getElementById("conceptsBox").classList.add("hidden");
   document.getElementById("quizBox").classList.add("hidden");
@@ -96,14 +92,13 @@ function showResults(data) {
     document.getElementById("conceptsBox").classList.remove("hidden");
   }
 
-  // quiz questions
+  // quiz
   if (data.questions && data.questions.length > 0) {
     document.getElementById("score").classList.add("hidden");
 
     var quizHtml = "";
     for (var i = 0; i < data.questions.length; i++) {
       var q = data.questions[i];
-
       quizHtml += '<div class="question-block" data-answer="' + q.answer + '" data-qid="' + i + '">';
       quizHtml += '<p>Q' + (i + 1) + '. ' + q.question + '</p>';
 
@@ -143,21 +138,17 @@ function checkAnswers() {
 
     var selectedVal = selected.value;
 
-    // highlight correct and wrong options
     qDiv.querySelectorAll(".option").forEach(function(opt) {
       if (opt.dataset.key === correctAnswer) {
         opt.classList.add("correct");
       } else if (opt.dataset.key === selectedVal) {
         opt.classList.add("wrong");
       }
-      // disable after checking
       var inp = opt.querySelector("input");
       if (inp) inp.disabled = true;
     });
 
     if (selectedVal === correctAnswer) correct++;
-
-    // show explanation
     qDiv.querySelector(".explanation-text").classList.add("show");
   });
 
