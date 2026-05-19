@@ -1,6 +1,6 @@
-# SmartRevise — AI Study Assistant
+# SmartRevise (AI Study Assistant)
 
-A web-based study tool that transforms your notes or uploaded documents into structured learning content. Paste text or upload a PDF/Word file, pick what you want, and get a summary, key concepts, and a scored quiz in seconds — powered by the Claude API.
+A web-based study tool that transforms your notes or uploaded documents into structured learning content. Paste text or upload a PDF/Word file, pick what you want, and get a summary, key concepts, and a scored quiz in seconds, powered by the Claude API.
 
 ---
 
