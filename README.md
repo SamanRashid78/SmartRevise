@@ -29,13 +29,7 @@ smartrevise/
 ├── requirements.txt
 ├── .gitignore
 ├── README.md
-└── static/
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       └── main.js
-└── templates/
-    └── index.html
+
 ```
 # Notes
 This project is still in progress
