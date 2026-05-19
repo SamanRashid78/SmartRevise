@@ -24,12 +24,17 @@ HTML, CSS, JavaScript (frontend)
 Anthropic Claude API (for AI processing)
 # Files
 ```
-smartrevise/
-├── app.py
-├── requirements.txt
+SmartRevise/
+├── app.py              ← Flask backend, file extraction, Claude API calls
+├── requirements.txt    ← dependencies
 ├── .gitignore
-├── README.md
-
+├── templates/
+│   └── index.html      ← frontend UI
+└── static/
+├── css/
+│   └── style.css   ← styling
+└── js/
+└── main.js     ← frontend logic
 ```
 # Notes
 This project is still in progress
