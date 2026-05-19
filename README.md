@@ -76,7 +76,7 @@ python app.py
 
 ## Notes
 
-- Scanned PDF images won't work — text-based PDFs only
+- Scanned PDF images won't work, text-based PDFs only
 - Documents are truncated at 8000 characters to stay within API limits
 - Requires an Anthropic API key to run
 
